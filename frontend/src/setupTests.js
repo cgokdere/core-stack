@@ -1,1 +1,6 @@
 import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+// Vitest has no global afterEach here, so Testing Library cannot clean up by itself.
+afterEach(() => cleanup());

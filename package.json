@@ -1,0 +1,17 @@
+{
+  "name": "child-development-platform",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SENG 383 term project: AI-assisted child development platform",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "install:all": "npm --prefix backend ci && npm --prefix frontend ci",
+    "dev:backend": "npm --prefix backend start",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "test": "npm --prefix backend test && npm --prefix frontend test",
+    "test:coverage": "npm --prefix backend run test:coverage && npm --prefix frontend run test:coverage",
+    "build": "npm --prefix frontend run build"
+  }
+}
