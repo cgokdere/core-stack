@@ -5,10 +5,13 @@
   "type": "commonjs",
   "scripts": {
     "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
     "express": "^4.21.2"
   },
   "devDependencies": {
