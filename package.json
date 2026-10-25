@@ -8,6 +8,7 @@
   },
   "scripts": {
     "install:all": "npm --prefix backend ci && npm --prefix frontend ci",
+    "seed": "npm --prefix backend run seed",
     "dev:backend": "npm --prefix backend start",
     "dev:frontend": "npm --prefix frontend run dev",
     "test": "npm --prefix backend test && npm --prefix frontend test",

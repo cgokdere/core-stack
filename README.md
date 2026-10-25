@@ -12,12 +12,15 @@ observations, with an AI summary for each role that supports decisions and never
 | Tests | Jest + Supertest (backend), Vitest + Testing Library (frontend) |
 | CI | GitHub Actions |
 
-SQLite, JWT authentication, the AI module and Playwright end-to-end tests are added with the modules (see the Jira board).
+JWT authentication, the AI module and Playwright end-to-end tests are added with the modules (see the Jira board).
+SQLite is in place: the schema has every table, and the seed script fills only demo users and children.
 
-## Current state: walking skeleton (v0.0)
+## Current state: walking skeleton (v0.0) and the database
 
 The frontend calls the backend's `GET /api/health` through the Vite proxy and shows whether it answers. Every layer
 (browser → React → Vite proxy → Express) and the CI pipeline are wired up; the features M1–M8 are built on top of this.
+`npm run seed` resets `backend/data/app.db` with synthetic accounts (password `Password123!`) and two child records.
+Links, schedule, tasks, entries, documents and AI feedback stay empty until those modules are merged.
 
 ## Requirements
 
@@ -29,6 +32,7 @@ From the repository root:
 
 ```bash
 npm run install:all      # install backend and frontend dependencies
+npm run seed             # create the SQLite file with synthetic users and children
 npm run dev:backend      # terminal 1: backend on http://localhost:3001
 npm run dev:frontend     # terminal 2: frontend on http://localhost:5173
 ```
