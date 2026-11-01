@@ -57,6 +57,8 @@ npm run build            # production build of the frontend
 
 ## Documents
 
+* [Software Requirements Specification](docs/SRS.md)
+* [Software Design Document](docs/SDD.md)
 * [Project Management Plan](docs/PMP.md)
 * [Jira plan](docs/JIRA_PLAN.md)
 * [Weekly meeting notes](docs/meetings/)
