@@ -77,6 +77,16 @@ function seedDatabase(db, { today = todayLocal(), bcryptRounds = 10 } = {}) {
     addTask.run(deniz, 'Okuma günlüğünü doldur', '', 'academic', day(3), 'todo', null, zeynep, now);
     addTask.run(ece, 'Resim defterini tamamla', '', 'social', day(2), 'todo', null, aylin, now);
 
+    const addEntry = db.prepare(
+      `INSERT INTO entries (child_id, author_id, entry_date, title, body, area, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    );
+    addEntry.run(deniz, murat, day(0), 'Derse katılım gözlemi', 'Bu hafta matematik derslerinde iki kez gönüllü olarak tahtaya kalktı.', 'academic', now);
+    addEntry.run(deniz, zeynep, day(1), 'Seans değerlendirmesi', 'Okuduğunu anlama etkinliklerinde sorulara ilk denemede verdiği doğru yanıt oranı yükseldi.', 'academic', now);
+    addEntry.run(deniz, elif, day(2), 'Görüşme notu', 'Sabah rutininde kullandığı nefes egzersizinin işe yaradığını anlattı.', 'health', now);
+    addEntry.run(deniz, elif, addDays(monday, -4), 'İlk görüşme', 'Aile ile tanışma görüşmesi yapıldı.', 'social', now);
+    addEntry.run(ece, elif, day(1), 'Görüşme notu', 'Haftalık görüşme tamamlandı.', 'social', now);
+
     return { selin, aylin, deniz, ece };
   });
 

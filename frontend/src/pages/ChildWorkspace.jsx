@@ -8,12 +8,14 @@ import { ErrorMessage, Loading, WeekNav } from '../components/ui.jsx';
 import { ChevronLeftIcon } from '../components/icons.jsx';
 import Schedule from '../components/Schedule.jsx';
 import Tasks from '../components/Tasks.jsx';
+import Entries from '../components/Entries.jsx';
 import Links from '../components/Links.jsx';
 import { useAuth } from '../auth.jsx';
 
 const TABS = [
   { id: 'schedule', label: 'Program', weekly: true },
   { id: 'tasks', label: 'Görevler', weekly: true },
+  { id: 'entries', label: 'Uzman girdileri' },
   { id: 'links', label: 'Bağlı uzmanlar', parentOnly: true },
 ];
 
@@ -72,6 +74,7 @@ export default function ChildWorkspace() {
       </div>
       {current.id === 'schedule' && <Schedule childId={child.id} weekStart={weekStart} canAdd />}
       {current.id === 'tasks' && <Tasks childId={child.id} weekStart={weekStart} role={role} userId={user.id} />}
+      {current.id === 'entries' && <Entries childId={child.id} user={user} />}
       {current.id === 'links' && <Links childId={child.id} childName={child.name} />}
     </section>
   );
