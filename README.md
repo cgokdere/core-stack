@@ -12,15 +12,19 @@ observations, with an AI summary for each role that supports decisions and never
 | Tests | Jest + Supertest (backend), Vitest + Testing Library (frontend) |
 | CI | GitHub Actions |
 
-JWT authentication, the AI module and Playwright end-to-end tests are added with the modules (see the Jira board).
-SQLite is in place: the schema has every table, and the seed script fills only demo users and children.
+SQLite holds the shared schedule, tasks, specialist entries, documents and role-based AI summary.
+The seed script fills synthetic demo data. The AI runs in mock mode unless `AI_PROVIDER` is set.
 
-## Current state: walking skeleton (v0.0) and the database
+## Current state: M1–M8
 
-The frontend calls the backend's `GET /api/health` through the Vite proxy and shows whether it answers. Every layer
-(browser → React → Vite proxy → Express) and the CI pipeline are wired up; the features M1–M8 are built on top of this.
-`npm run seed` resets `backend/data/app.db` with synthetic accounts (password `Password123!`) and two child records.
-Links, schedule, tasks, entries, documents and AI feedback stay empty until those modules are merged.
+`npm run seed` resets `backend/data/app.db`. Every demo account uses the password `Password123!`.
+
+| Role | E-mail |
+|---|---|
+| Parent | `selin.yildiz@example.com` |
+| Child | `deniz.yildiz@example.com` |
+| Specialist, linked | `murat.kaya@example.com` |
+| Specialist, not linked | `can.demir@example.com` |
 
 ## Requirements
 
@@ -37,7 +41,7 @@ npm run dev:backend      # terminal 1: backend on http://localhost:3001
 npm run dev:frontend     # terminal 2: frontend on http://localhost:5173
 ```
 
-Open <http://localhost:5173>: the page should say **"Backend çalışıyor"**.
+Open <http://localhost:5173> and sign in with one of the demo accounts above.
 
 ## Tests
 

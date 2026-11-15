@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
+const apiTarget = process.env.API_PROXY_TARGET || 'http://localhost:3001';
+
 export default defineConfig({
   plugins: [react()],
-  server: { proxy: { '/api': 'http://localhost:3001' } },
+  server: { proxy: { '/api': apiTarget } },
   test: {
     environment: 'jsdom',
     setupFiles: './src/setupTests.js',
