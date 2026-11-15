@@ -7,7 +7,7 @@ const { AREAS, SPECIALTIES } = require('../src/constants');
 const { openDb } = require('../src/db');
 const { seedDatabase, DEMO_PASSWORD } = require('../src/seed');
 
-const EMPTY_TABLES = ['events', 'tasks', 'entries', 'documents', 'ai_feedback'];
+const EMPTY_TABLES = ['tasks', 'entries', 'documents', 'ai_feedback'];
 
 describe('database schema and seed', () => {
   it('reads database settings from the environment', () => {
@@ -83,6 +83,7 @@ describe('database schema and seed', () => {
     ]);
     expect(db.prepare('SELECT COUNT(*) AS n FROM children').get().n).toBe(2);
     expect(db.prepare('SELECT COUNT(*) AS n FROM links').get().n).toBe(4);
+    expect(db.prepare('SELECT COUNT(*) AS n FROM events').get().n).toBe(6);
     EMPTY_TABLES.forEach((table) => {
       expect(db.prepare(`SELECT COUNT(*) AS n FROM ${table}`).get().n).toBe(0);
     });

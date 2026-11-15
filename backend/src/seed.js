@@ -4,11 +4,19 @@
 // the module that owns that table.
 
 const bcrypt = require('bcryptjs');
+const { weekRange, todayLocal } = require('./services/weeks');
 
 const DEMO_PASSWORD = 'Password123!';
 
-function seedDatabase(db, { bcryptRounds = 10 } = {}) {
+function addDays(dateStr, days) {
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  return new Date(d.getTime() + days * 86400000).toISOString().slice(0, 10);
+}
+
+function seedDatabase(db, { today = todayLocal(), bcryptRounds = 10 } = {}) {
   const hash = bcrypt.hashSync(DEMO_PASSWORD, bcryptRounds);
+  const monday = weekRange(today).start;
+  const day = (offset) => addDays(monday, offset);
 
   const run = db.transaction(() => {
     ['ai_feedback', 'documents', 'entries', 'tasks', 'events', 'links', 'children', 'users'].forEach((table) => {
@@ -45,6 +53,16 @@ function seedDatabase(db, { bcryptRounds = 10 } = {}) {
     addLink.run(deniz, elif, 'psychologist', now);
     addLink.run(deniz, zeynep, 'special_education', now);
     addLink.run(ece, elif, 'psychologist', now);
+
+    const addEvent = db.prepare(
+      'INSERT INTO events (child_id, title, starts_at, ends_at, area, created_by) VALUES (?, ?, ?, ?, ?, ?)'
+    );
+    addEvent.run(deniz, 'Özel eğitim seansı', `${day(0)}T16:00`, `${day(0)}T17:00`, 'academic', zeynep);
+    addEvent.run(deniz, 'Yüzme antrenmanı', `${day(1)}T17:30`, `${day(1)}T18:30`, 'sport', selin);
+    addEvent.run(deniz, 'Veli toplantısı', `${day(2)}T15:30`, `${day(2)}T16:15`, 'social', murat);
+    addEvent.run(deniz, 'Psikolog görüşmesi', `${day(3)}T16:30`, `${day(3)}T17:15`, 'health', elif);
+    addEvent.run(deniz, 'Çocuk doktoru kontrolü', `${day(4)}T10:00`, `${day(4)}T10:30`, 'health', selin);
+    addEvent.run(ece, 'Resim kursu', `${day(1)}T15:00`, `${day(1)}T16:00`, 'social', aylin);
 
     return { selin, aylin, deniz, ece };
   });

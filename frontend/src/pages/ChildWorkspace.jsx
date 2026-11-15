@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { api } from '../lib/api.js';
 import { useLoad } from '../lib/useLoad.js';
+import { todayIso, weekStartOf } from '../lib/dates.js';
 import { avatarTone, initials } from '../lib/labels.js';
-import { ErrorMessage, Loading } from '../components/ui.jsx';
+import { ErrorMessage, Loading, WeekNav } from '../components/ui.jsx';
 import { ChevronLeftIcon } from '../components/icons.jsx';
+import Schedule from '../components/Schedule.jsx';
 import Links from '../components/Links.jsx';
+
+const TABS = [
+  { id: 'schedule', label: 'Program', weekly: true },
+  { id: 'links', label: 'Bağlı uzmanlar', parentOnly: true },
+];
 
 export default function ChildWorkspace() {
   const { childId } = useParams();
   const { data, error, loading } = useLoad(() => api.get(`/children/${childId}`), [childId]);
+  const [tab, setTab] = useState('schedule');
+  const [weekStart, setWeekStart] = useState(() => weekStartOf(todayIso()));
 
   if (loading) return <Loading loading rows={4} />;
   if (error) {
@@ -22,6 +31,9 @@ export default function ChildWorkspace() {
   }
 
   const { child, role } = data;
+  const tabs = TABS.filter((item) => !item.parentOnly || role === 'parent');
+  const current = tabs.find((item) => item.id === tab) || tabs[0];
+
   return (
     <section>
       <p className="breadcrumb">
@@ -37,14 +49,25 @@ export default function ChildWorkspace() {
           <p className="muted">{child.grade}</p>
         </div>
       </div>
-      {role === 'parent' && (
+      <div className="toolbar">
         <div role="tablist" aria-label="Bölümler" className="tabs">
-          <button role="tab" type="button" aria-selected="true" className="tab">
-            Bağlı uzmanlar
-          </button>
+          {tabs.map((item) => (
+            <button
+              key={item.id}
+              role="tab"
+              type="button"
+              aria-selected={current.id === item.id}
+              className="tab"
+              onClick={() => setTab(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
-      )}
-      {role === 'parent' && <Links childId={child.id} childName={child.name} />}
+        {current.weekly && <WeekNav weekStart={weekStart} onChange={setWeekStart} />}
+      </div>
+      {current.id === 'schedule' && <Schedule childId={child.id} weekStart={weekStart} canAdd />}
+      {current.id === 'links' && <Links childId={child.id} childName={child.name} />}
     </section>
   );
 }
