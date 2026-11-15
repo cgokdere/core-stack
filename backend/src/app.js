@@ -5,6 +5,7 @@ const { HttpError } = require('./validate');
 
 const authRoutes = require('./routes/auth');
 const childrenRoutes = require('./routes/children');
+const linkRoutes = require('./routes/links');
 
 function createApp({ db, config = loadConfig() } = {}) {
   const app = express();
@@ -15,9 +16,12 @@ function createApp({ db, config = loadConfig() } = {}) {
     res.json({ status: 'ok' });
   });
 
-  app.use('/api/auth', authRoutes(db, config));
-  app.use('/api/children', authenticate(db, config));
-  app.use('/api/children', childrenRoutes(db));
+  if (db) {
+    app.use('/api/auth', authRoutes(db, config));
+    app.use('/api/children', authenticate(db, config));
+    app.use('/api/children', childrenRoutes(db));
+    app.use('/api/children/:childId/links', linkRoutes(db));
+  }
 
   app.use('/api', (req, res) => {
     res.status(404).json({ error: 'Bulunamadı.' });

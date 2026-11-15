@@ -86,7 +86,7 @@ describe('M1 - login and roles', () => {
     const elif = await request(app)
       .get('/api/children')
       .set(auth(await login(app, 'elif.arslan@example.com')));
-    expect(elif.body.children).toEqual([]);
+    expect(elif.body.children.map((c) => c.name)).toEqual(['Deniz Yıldız', 'Ece Korkmaz']);
 
     const can = await request(app)
       .get('/api/children')

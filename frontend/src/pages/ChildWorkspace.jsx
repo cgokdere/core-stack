@@ -5,6 +5,7 @@ import { useLoad } from '../lib/useLoad.js';
 import { avatarTone, initials } from '../lib/labels.js';
 import { ErrorMessage, Loading } from '../components/ui.jsx';
 import { ChevronLeftIcon } from '../components/icons.jsx';
+import Links from '../components/Links.jsx';
 
 export default function ChildWorkspace() {
   const { childId } = useParams();
@@ -20,7 +21,7 @@ export default function ChildWorkspace() {
     );
   }
 
-  const { child } = data;
+  const { child, role } = data;
   return (
     <section>
       <p className="breadcrumb">
@@ -36,6 +37,14 @@ export default function ChildWorkspace() {
           <p className="muted">{child.grade}</p>
         </div>
       </div>
+      {role === 'parent' && (
+        <div role="tablist" aria-label="Bölümler" className="tabs">
+          <button role="tab" type="button" aria-selected="true" className="tab">
+            Bağlı uzmanlar
+          </button>
+        </div>
+      )}
+      {role === 'parent' && <Links childId={child.id} childName={child.name} />}
     </section>
   );
 }

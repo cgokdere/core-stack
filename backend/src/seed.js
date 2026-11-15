@@ -28,14 +28,23 @@ function seedDatabase(db, { bcryptRounds = 10 } = {}) {
     const aylin = user('aylin.korkmaz@example.com', 'Aylin Korkmaz', 'parent');
     const denizUser = user('deniz.yildiz@example.com', 'Deniz Yıldız', 'child');
     const eceUser = user('ece.korkmaz@example.com', 'Ece Korkmaz', 'child');
-    user('murat.kaya@example.com', 'Murat Kaya', 'specialist', 'teacher');
-    user('elif.arslan@example.com', 'Elif Arslan', 'specialist', 'psychologist');
-    user('zeynep.aydin@example.com', 'Zeynep Aydın', 'specialist', 'special_education');
+    const murat = user('murat.kaya@example.com', 'Murat Kaya', 'specialist', 'teacher');
+    const elif = user('elif.arslan@example.com', 'Elif Arslan', 'specialist', 'psychologist');
+    const zeynep = user('zeynep.aydin@example.com', 'Zeynep Aydın', 'specialist', 'special_education');
     user('can.demir@example.com', 'Can Demir', 'specialist', 'coach');
 
     const addChild = db.prepare('INSERT INTO children (name, grade, parent_id, user_id) VALUES (?, ?, ?, ?)');
     const deniz = Number(addChild.run('Deniz Yıldız', '4. sınıf', selin, denizUser).lastInsertRowid);
     const ece = Number(addChild.run('Ece Korkmaz', '3. sınıf', aylin, eceUser).lastInsertRowid);
+
+    const now = new Date().toISOString();
+    const addLink = db.prepare(
+      'INSERT INTO links (child_id, specialist_id, specialty, created_at) VALUES (?, ?, ?, ?)'
+    );
+    addLink.run(deniz, murat, 'teacher', now);
+    addLink.run(deniz, elif, 'psychologist', now);
+    addLink.run(deniz, zeynep, 'special_education', now);
+    addLink.run(ece, elif, 'psychologist', now);
 
     return { selin, aylin, deniz, ece };
   });
