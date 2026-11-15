@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import Schedule from './Schedule.jsx';
+import Stats from './Stats.jsx';
 import { mockFetch, WEEK_START } from '../testUtils.jsx';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -63,6 +64,40 @@ describe('Schedule (M3)', () => {
   it('shows a load error', async () => {
     mockFetch({ 'GET /children/1/events': { status: 403, body: { error: 'Yetkiniz yok.' } } });
     render(<Schedule childId={1} weekStart={WEEK_START} canAdd={false} />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Yetkiniz yok.');
+  });
+});
+
+describe('Stats (M7)', () => {
+  it('shows the completion rate in total and by area', async () => {
+    mockFetch({
+      'GET /children/1/stats': {
+        stats: {
+          weekStart: WEEK_START,
+          weekEnd: '2026-10-18',
+          total: 6,
+          done: 3,
+          rate: 50,
+          byArea: [
+            { area: 'academic', total: 3, done: 2, rate: 67 },
+            { area: 'social', total: 1, done: 0, rate: 0 },
+            { area: 'health', total: 1, done: 0, rate: 0 },
+            { area: 'sport', total: 1, done: 1, rate: 100 },
+          ],
+        },
+      },
+    });
+    render(<Stats childId={1} weekStart={WEEK_START} />);
+    expect(await screen.findByTestId('total-rate')).toHaveTextContent('%50');
+    expect(screen.getByTestId('total-count')).toHaveTextContent('3 / 6 görev tamamlandı');
+    expect(screen.getByTestId('area-academic')).toHaveTextContent('Akademik');
+    expect(screen.getByTestId('area-academic')).toHaveTextContent('2/3');
+    expect(screen.getByTestId('area-sport')).toHaveTextContent('1/1');
+  });
+
+  it('shows an error when the statistics cannot be loaded', async () => {
+    mockFetch({ 'GET /children/1/stats': { status: 403, body: { error: 'Yetkiniz yok.' } } });
+    render(<Stats childId={1} weekStart={WEEK_START} />);
     expect(await screen.findByRole('alert')).toHaveTextContent('Yetkiniz yok.');
   });
 });

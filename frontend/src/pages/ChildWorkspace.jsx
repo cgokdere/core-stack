@@ -10,6 +10,7 @@ import Schedule from '../components/Schedule.jsx';
 import Tasks from '../components/Tasks.jsx';
 import Entries from '../components/Entries.jsx';
 import Documents from '../components/Documents.jsx';
+import Stats from '../components/Stats.jsx';
 import Links from '../components/Links.jsx';
 import { useAuth } from '../auth.jsx';
 
@@ -18,6 +19,7 @@ const TABS = [
   { id: 'tasks', label: 'Görevler', weekly: true },
   { id: 'entries', label: 'Uzman girdileri' },
   { id: 'documents', label: 'Belgeler' },
+  { id: 'stats', label: 'İstatistik', weekly: true },
   { id: 'links', label: 'Bağlı uzmanlar', parentOnly: true },
 ];
 
@@ -78,6 +80,7 @@ export default function ChildWorkspace() {
       {current.id === 'tasks' && <Tasks childId={child.id} weekStart={weekStart} role={role} userId={user.id} />}
       {current.id === 'entries' && <Entries childId={child.id} user={user} />}
       {current.id === 'documents' && <Documents childId={child.id} />}
+      {current.id === 'stats' && <Stats childId={child.id} weekStart={weekStart} />}
       {current.id === 'links' && <Links childId={child.id} childName={child.name} />}
     </section>
   );
