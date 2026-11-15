@@ -64,6 +64,19 @@ function seedDatabase(db, { today = todayLocal(), bcryptRounds = 10 } = {}) {
     addEvent.run(deniz, 'Çocuk doktoru kontrolü', `${day(4)}T10:00`, `${day(4)}T10:30`, 'health', selin);
     addEvent.run(ece, 'Resim kursu', `${day(1)}T15:00`, `${day(1)}T16:00`, 'social', aylin);
 
+    const addTask = db.prepare(
+      `INSERT INTO tasks (child_id, title, description, area, due_date, status, done_at, assigned_by, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    );
+    const done = (offset) => `${day(offset)}T19:00:00.000Z`;
+    addTask.run(deniz, '15 dakika sesli okuma', 'Her akşam kısa bir kitap bölümünü sesli oku.', 'academic', day(0), 'done', done(0), murat, now);
+    addTask.run(deniz, 'Matematik çalışma kâğıdı', 'Sayfa 3’teki alıştırmaları çöz.', 'academic', day(1), 'done', done(1), murat, now);
+    addTask.run(deniz, '5 dakika nefes egzersizi', 'Uzmanın gösterdiği şekilde yap.', 'health', day(2), 'todo', null, elif, now);
+    addTask.run(deniz, 'Yüzme çantasını hazırla', '', 'sport', day(1), 'done', done(1), selin, now);
+    addTask.run(deniz, 'Sınıf sunumu için resim hazırla', 'Sunum için bir resim çiz.', 'social', day(4), 'todo', null, murat, now);
+    addTask.run(deniz, 'Okuma günlüğünü doldur', '', 'academic', day(3), 'todo', null, zeynep, now);
+    addTask.run(ece, 'Resim defterini tamamla', '', 'social', day(2), 'todo', null, aylin, now);
+
     return { selin, aylin, deniz, ece };
   });
 

@@ -7,15 +7,19 @@ import { avatarTone, initials } from '../lib/labels.js';
 import { ErrorMessage, Loading, WeekNav } from '../components/ui.jsx';
 import { ChevronLeftIcon } from '../components/icons.jsx';
 import Schedule from '../components/Schedule.jsx';
+import Tasks from '../components/Tasks.jsx';
 import Links from '../components/Links.jsx';
+import { useAuth } from '../auth.jsx';
 
 const TABS = [
   { id: 'schedule', label: 'Program', weekly: true },
+  { id: 'tasks', label: 'Görevler', weekly: true },
   { id: 'links', label: 'Bağlı uzmanlar', parentOnly: true },
 ];
 
 export default function ChildWorkspace() {
   const { childId } = useParams();
+  const { user } = useAuth();
   const { data, error, loading } = useLoad(() => api.get(`/children/${childId}`), [childId]);
   const [tab, setTab] = useState('schedule');
   const [weekStart, setWeekStart] = useState(() => weekStartOf(todayIso()));
@@ -67,6 +71,7 @@ export default function ChildWorkspace() {
         {current.weekly && <WeekNav weekStart={weekStart} onChange={setWeekStart} />}
       </div>
       {current.id === 'schedule' && <Schedule childId={child.id} weekStart={weekStart} canAdd />}
+      {current.id === 'tasks' && <Tasks childId={child.id} weekStart={weekStart} role={role} userId={user.id} />}
       {current.id === 'links' && <Links childId={child.id} childName={child.name} />}
     </section>
   );

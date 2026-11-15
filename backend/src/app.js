@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const childrenRoutes = require('./routes/children');
 const linkRoutes = require('./routes/links');
 const eventRoutes = require('./routes/events');
+const taskRoutes = require('./routes/tasks');
 
 function createApp({ db, config = loadConfig() } = {}) {
   const app = express();
@@ -23,6 +24,7 @@ function createApp({ db, config = loadConfig() } = {}) {
     app.use('/api/children', childrenRoutes(db));
     app.use('/api/children/:childId/links', linkRoutes(db));
     app.use('/api/children/:childId/events', eventRoutes(db));
+    app.use('/api/children/:childId/tasks', taskRoutes(db));
   }
 
   app.use('/api', (req, res) => {

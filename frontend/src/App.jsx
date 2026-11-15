@@ -5,6 +5,7 @@ import Layout from './components/Layout.jsx';
 import Login from './pages/Login.jsx';
 import ChildrenList from './pages/ChildrenList.jsx';
 import ChildWorkspace from './pages/ChildWorkspace.jsx';
+import ChildHome from './pages/ChildHome.jsx';
 
 export function RequireRole({ roles }) {
   const { user, loading } = useAuth();
@@ -20,17 +21,6 @@ function Home() {
   return <Navigate to={user ? homePath(user) : '/login'} replace />;
 }
 
-function ChildScreen() {
-  const { user } = useAuth();
-  const first = user.name.split(' ')[0];
-  return (
-    <section>
-      <h1>Merhaba {first}!</h1>
-      <p className="muted">Programın ve görevlerin burada görünecek.</p>
-    </section>
-  );
-}
-
 export default function App() {
   return (
     <Routes>
@@ -41,7 +31,7 @@ export default function App() {
           <Route path="/children/:childId" element={<ChildWorkspace />} />
         </Route>
         <Route element={<RequireRole roles={['child']} />}>
-          <Route path="/my" element={<ChildScreen />} />
+          <Route path="/my" element={<ChildHome />} />
         </Route>
       </Route>
       <Route path="*" element={<Home />} />
