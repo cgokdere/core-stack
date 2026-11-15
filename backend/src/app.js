@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const { loadConfig } = require('./config');
 const { authenticate } = require('./middleware/auth');
 const { HttpError } = require('./validate');
@@ -9,6 +10,7 @@ const linkRoutes = require('./routes/links');
 const eventRoutes = require('./routes/events');
 const taskRoutes = require('./routes/tasks');
 const entryRoutes = require('./routes/entries');
+const documentRoutes = require('./routes/documents');
 
 function createApp({ db, config = loadConfig() } = {}) {
   const app = express();
@@ -27,6 +29,7 @@ function createApp({ db, config = loadConfig() } = {}) {
     app.use('/api/children/:childId/events', eventRoutes(db));
     app.use('/api/children/:childId/tasks', taskRoutes(db));
     app.use('/api/children/:childId/entries', entryRoutes(db));
+    app.use('/api/children/:childId/documents', documentRoutes(db, config));
   }
 
   app.use('/api', (req, res) => {
@@ -37,6 +40,12 @@ function createApp({ db, config = loadConfig() } = {}) {
   app.use((err, req, res, next) => {
     if (err instanceof HttpError) {
       return res.status(err.status).json({ error: err.message });
+    }
+    if (err instanceof multer.MulterError) {
+      const tooBig = err.code === 'LIMIT_FILE_SIZE';
+      return res
+        .status(tooBig ? 413 : 400)
+        .json({ error: tooBig ? 'Dosya en fazla 10 MB olabilir.' : 'Dosya yüklenemedi.' });
     }
     if (err.type === 'entity.parse.failed') {
       return res.status(400).json({ error: 'İstek gövdesi geçerli JSON değil.' });
