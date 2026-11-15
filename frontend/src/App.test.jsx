@@ -6,7 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import App from './App.jsx';
 import { AuthProvider } from './auth.jsx';
 import { tokenStore } from './lib/api.js';
-import { childUser, mockFetch, parentUser, specialistUser } from './testUtils.jsx';
+import { childUser, mockFetch, parentUser, sampleTasks, specialistUser } from './testUtils.jsx';
 
 const childRecord = { id: 1, name: 'Deniz Yıldız', grade: '4. sınıf', parentId: 1 };
 
@@ -24,6 +24,8 @@ const baseRoutes = (user) => ({
   'GET /auth/me': { user },
   'GET /children': { children: [childRecord] },
   'GET /children/1': { child: childRecord, role: user.role },
+  'GET /children/1/events': { weekStart: '2026-10-12', weekEnd: '2026-10-18', events: [] },
+  'GET /children/1/tasks': { tasks: sampleTasks },
 });
 
 beforeEach(() => localStorage.clear());
@@ -78,8 +80,22 @@ describe('routing and roles (M1)', () => {
     tokenStore.set('tok');
     mockFetch(baseRoutes(parentUser));
     renderApp('/my');
+    // a parent with a single child is taken straight to that child
     expect(await screen.findByRole('heading', { name: 'Deniz Yıldız' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /Merhaba/ })).not.toBeInTheDocument();
+  });
+
+  it('shows a parent every tab including linked specialists, a specialist without it', async () => {
+    tokenStore.set('tok');
+    mockFetch(baseRoutes(parentUser));
+    const parentView = renderApp('/children/1');
+    expect(await screen.findByRole('tab', { name: 'Bağlı uzmanlar' })).toBeInTheDocument();
+    parentView.unmount();
+
+    mockFetch(baseRoutes(specialistUser));
+    renderApp('/children/1');
+    expect(await screen.findByRole('tab', { name: 'Uzman girdileri' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Bağlı uzmanlar' })).not.toBeInTheDocument();
   });
 
   it('shows the API error when a specialist opens a child they are not linked to', async () => {

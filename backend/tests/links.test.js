@@ -19,7 +19,7 @@ describe('M2 - linking specialists', () => {
     const parent = await login(app, 'selin.yildiz@example.com');
     const can = await login(app, 'can.demir@example.com');
 
-    const before = await request(app).get(`/api/children/${ids.deniz}`).set(auth(can));
+    const before = await request(app).get(`/api/children/${ids.deniz}/tasks`).set(auth(can));
     expect(before.status).toBe(403);
 
     const res = await request(app)
@@ -29,7 +29,7 @@ describe('M2 - linking specialists', () => {
     expect(res.status).toBe(201);
     expect(res.body.link).toMatchObject({ email: 'can.demir@example.com', specialty: 'coach' });
 
-    const after = await request(app).get(`/api/children/${ids.deniz}`).set(auth(can));
+    const after = await request(app).get(`/api/children/${ids.deniz}/tasks`).set(auth(can));
     expect(after.status).toBe(200);
   });
 
@@ -80,13 +80,25 @@ describe('M2 - linking specialists', () => {
     const muratId = (await request(app).get('/api/auth/me').set(auth(murat))).body.user.id;
     const base = `/api/children/${ids.deniz}`;
 
-    expect((await request(app).get(base).set(auth(murat))).status).toBe(200);
+    expect((await request(app).get(`${base}/tasks`).set(auth(murat))).status).toBe(200);
 
     const del = await request(app).delete(`${base}/links/${muratId}`).set(auth(parent));
     expect(del.status).toBe(204);
 
     const probes = [
       ['get', base],
+      ['get', `${base}/events`],
+      ['post', `${base}/events`],
+      ['get', `${base}/tasks`],
+      ['post', `${base}/tasks`],
+      ['get', `${base}/entries`],
+      ['post', `${base}/entries`],
+      ['put', `${base}/entries/1`],
+      ['get', `${base}/documents`],
+      ['post', `${base}/documents`],
+      ['get', `${base}/documents/1/download`],
+      ['get', `${base}/stats`],
+      ['post', `${base}/ai-summary`],
       ['get', `${base}/links`],
     ];
     for (const [method, url] of probes) {

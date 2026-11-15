@@ -12,8 +12,10 @@ const taskRoutes = require('./routes/tasks');
 const entryRoutes = require('./routes/entries');
 const documentRoutes = require('./routes/documents');
 const statsRoutes = require('./routes/stats');
+const aiFeedbackRoutes = require('./routes/aiFeedback');
+const aiSummaryRoutes = require('./routes/aiSummary');
 
-function createApp({ db, config = loadConfig() } = {}) {
+function createApp({ db, config = loadConfig(), aiFetch } = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.use(express.json({ limit: '100kb' }));
@@ -32,6 +34,8 @@ function createApp({ db, config = loadConfig() } = {}) {
     app.use('/api/children/:childId/entries', entryRoutes(db));
     app.use('/api/children/:childId/documents', documentRoutes(db, config));
     app.use('/api/children/:childId/stats', statsRoutes(db));
+    app.use('/api/children/:childId/ai-summary/feedback', aiFeedbackRoutes(db));
+    app.use('/api/children/:childId/ai-summary', aiSummaryRoutes(db, config, aiFetch));
   }
 
   app.use('/api', (req, res) => {

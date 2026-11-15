@@ -12,13 +12,19 @@ observations, with an AI summary for each role that supports decisions and never
 | Tests | Jest + Supertest (backend), Vitest + Testing Library (frontend) |
 | CI | GitHub Actions |
 
-The AI module and Playwright end-to-end tests are added with the later modules (see the Jira board).
-SQLite is in place. The seed script fills demo users and children. Login (M1) checks the password and sends each role to its own screen.
+SQLite holds the shared schedule, tasks, specialist entries, documents and role-based AI summary.
+The seed script fills synthetic demo data. The AI runs in mock mode unless `AI_PROVIDER` is set.
 
-## Current state: M1 login and roles
+## Current state: M1–M8
 
-`npm run seed` resets `backend/data/app.db` with synthetic accounts (password `Password123!`) and two child records.
-Open <http://localhost:5173>, sign in, and the role comes from the account. A parent sees their children. A child sees only their own page. Specialists see no children until they are linked (M2).
+`npm run seed` resets `backend/data/app.db`. Every demo account uses the password `Password123!`.
+
+| Role | E-mail |
+|---|---|
+| Parent | `selin.yildiz@example.com` |
+| Child | `deniz.yildiz@example.com` |
+| Specialist, linked | `murat.kaya@example.com` |
+| Specialist, not linked | `can.demir@example.com` |
 
 ## Requirements
 
@@ -35,8 +41,7 @@ npm run dev:backend      # terminal 1: backend on http://localhost:3001
 npm run dev:frontend     # terminal 2: frontend on http://localhost:5173
 ```
 
-Open <http://localhost:5173> and sign in. Demo accounts use the password `Password123!`.
-Parent: `selin.yildiz@example.com`. Child: `deniz.yildiz@example.com`.
+Open <http://localhost:5173> and sign in with one of the demo accounts above.
 
 ## Tests
 
